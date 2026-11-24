@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vehicle Cost Comparator (Canada)</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <h1>Vehicle Total-Cost Comparator <small>EV vs hybrid vs gas &middot; CAD</small></h1>
+  <div class="toolbar">
+    <button id="btnEpa" title="Pulls efficiency from fueleconomy.gov for vehicles with an EPA id">Refresh efficiency (EPA)</button>
+    <button id="btnFile">Load vehicles.js / JSON</button>
+    <button id="btnExport">Export state</button>
+    <button id="btnImport">Import state</button>
+    <button id="btnReset" class="danger">Reset</button>
+    <input type="file" id="fileIn" accept=".js,.json" hidden>
+  </div>
+</header>
+<div id="banner" class="banner" hidden></div>
+
+<main>
+<aside id="params">
+  <h2>Scenario</h2>
+  <label class="row">Preset
+    <select id="preset">
+      <option value="">Custom</option>
+      <option value="driveway">Ontario - driveway, overnight plan</option>
+      <option value="ontarioReg">Ontario - driveway, regular rate</option>
+      <option value="apartment">Ontario - apartment, fast chargers</option>
+      <option value="mixed">Ontario - mixed (work L2 + fast)</option>
+      <option value="qc">Quebec - driveway</option>
+      <option value="ab">Alberta - driveway</option>
+      <optgroup label="Full scenarios (reset all inputs)">
+        <option value="fullLoan">Loan - 6.9%, 6 yr, 10% down</option>
+        <option value="fullLoanPromo">Loan - 0% promo, 5 yr</option>
+        <option value="fullLease">Lease - 3 yr, 20,000 km/yr</option>
+        <option value="fullLeaseLow">Lease - 4 yr, low km (15,000)</option>
+        <option value="fullTrade">Trade-in - $8,000, paid off, cash</option>
+        <option value="fullTradeOwing">Trade-in - $8,000, $3,000 owing, loan</option>
+        <option value="fullKeep">Keep current car vs buy</option>
+        <option value="fullCity">City dweller - parking, public charging</option>
+        <option value="fullHighKm">High mileage - 35,000 km/yr</option>
+        <option value="fullConservative">Conservative EV - 8 yr, battery risk</option>
+        <option value="fullLuxury">Premium vehicle - luxury tax, loan</option>
+      </optgroup>
+    </select>
+  </label>
+  <div id="paramFields"></div>
+</aside>
+
+<section id="content">
+  <div class="card">
+    <h2>Vehicles <small>tick to compare &middot; click a name to edit</small></h2>
+    <div class="row-actions" style="margin:0 0 8px">
+      <input id="vehFilter" type="search" placeholder="Filter (e.g. tesla, rav4, hybrid)" style="flex:1;padding:4px 6px">
+      <select id="typeFilter"><option value="">All types</option><option>EV</option><option>HEV</option><option>ICE</option></select>
+      <button class="ghost" id="btnClear">Untick all</button>
+    </div>
+    <div id="vehicleList"></div>
+    <div class="row-actions"><button id="btnAdd">+ Add vehicle</button>
+      <label>Reference (baseline) <select id="refVeh"></select></label></div>
+  </div>
+
+  <div class="card"><h2>Results</h2><div id="results"></div></div>
+  <div class="card"><h2>Cumulative net cost by year <small>purchase + running &minus; resale</small></h2><div id="chart"></div><div id="legend" class="legend"></div></div>
+  <div class="card"><h2>Cash vs loan vs lease</h2><div id="cashloan"></div></div>
+  <div class="card"><h2>Break-even vs reference</h2><div id="breakeven"></div></div>
+  <div class="card"><h2>Year-by-year detail</h2><div id="detailSel"></div><div id="detail"></div></div>
+  <div class="card notes">
+    <h2>How to update vehicle data</h2>
+    <ul>
+      <li><b>Efficiency</b>: the <i>Refresh efficiency (EPA)</i> button works directly from the browser (fueleconomy.gov allows it).</li>
+      <li><b>Prices / configurations</b>: manufacturer sites block browser requests (CORS) and render prices with JavaScript. Run
+        <code>powershell -ExecutionPolicy Bypass -File ..\Update-Vehicles.ps1</code>, then reload this page - a banner will offer the new data. Anything the script can't read is left unchanged and flagged "unverified".</li>
+      <li>Or edit any vehicle by hand (click its name); edits are saved in your browser.</li>
+    </ul>
+  </div>
+</section>
+</main>
+<script src="vehicles.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
